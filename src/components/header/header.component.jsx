@@ -29,8 +29,11 @@ const Header = ({currentUser, hidden}) => (
 );
 
 const mapStateToProps = ({user: {currentUser}, cart: {hidden}}) => ({
-    currentUser: currentUser,
-    hidden: hidden
+    currentUser,
+    hidden
+    //similar:
+    // currentUser: currentUser,
+    // hidden: hidden
 });
 
 export default connect(mapStateToProps)(Header);
