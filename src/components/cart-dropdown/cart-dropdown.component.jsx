@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import {connect} from 'react-redux';
+import {selectCartItems} from '../../redux/cart/cart.selectors';
 
 import './cart-dropdown.styles.scss';
 
@@ -16,8 +17,8 @@ const CartDropdown = ({cartItems}) => (
     </div>
 );
 
-const mapStateToProps = ({cart: {cartItems}}) => ({ //state.cart.cartitem
-    cartItems
+const mapStateToProps = state => ({ //state.cart.cartitem
+    cartItems: selectCartItems(state)
 });
 
 export default connect(mapStateToProps)(CartDropdown);
