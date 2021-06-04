@@ -53,7 +53,7 @@ class App extends React.Component {
         <Header />
         <Switch> {/* Goes char by char and as soon as a match is found, breaks and loads that component */}
           <Route exact path='/' component={HomePage} /> {/* exact[true/false] if true, only renders component which strictly matches the path */}
-          <Route exact path='/shop' component={ShopPage} />
+          <Route path='/shop' component={ShopPage} />
           <Route exact path='/checkout' component={CheckoutPage} />
           <Route 
           exact 
