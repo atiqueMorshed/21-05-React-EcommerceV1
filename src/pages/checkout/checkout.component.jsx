@@ -8,39 +8,40 @@ import {selectCartTotal, selectCartItems} from '../../redux/cart/cart.selectors'
 import CheckoutItem from '../../components/checkout-item/checkout-item.component';
 import StripeCheckoutButton from '../../components/stripe-button/stripe-button.component';
 
+import {CheckoutPageContainer, CheckoutHeaderContainer, HeaderBlockContainer, TotalContainer, TestPaymentContainer} from './checkout.styles';
 import './checkout.styles.scss';
 
 const CheckoutPage = ({cartItems, total}) => (
-    <div className='checkout-page'>
-        <div className='checkout-header'>
-            <div className='header-block'>
+    <CheckoutPageContainer>
+        <CheckoutHeaderContainer>
+            <HeaderBlockContainer>
                 <span>Name</span>
-            </div>
-            <div className='header-block'>
+            </HeaderBlockContainer>
+            <HeaderBlockContainer>
                 <span>Description</span>
-            </div>
-            <div className='header-block'>
+            </HeaderBlockContainer>
+            <HeaderBlockContainer>
                 <span>Quantity</span>
-            </div>
-            <div className='header-block'>
+            </HeaderBlockContainer>
+            <HeaderBlockContainer>
                 <span>Price</span>
-            </div>
-            <div className='header-block'>
+            </HeaderBlockContainer>
+            <HeaderBlockContainer>
                 <span>Remove</span>
-            </div>
-        </div>
+            </HeaderBlockContainer>
+        </CheckoutHeaderContainer>
         {cartItems.map(cartItem => (
             <CheckoutItem key={cartItem.id} cartItem={cartItem} />))}
-        <div className='total'>
+        <TotalContainer>
             <span>Total: ${total}</span>
-        </div>
+        </TotalContainer>
         <StripeCheckoutButton price={total}/>
-        <div className='test-payment'>
+        <TestPaymentContainer>
             *Test Credit Cart Information*
             <br/>
             4242 4242 4242 4242 - exp 01/2069 - CVV 123
-        </div>
-    </div>
+        </TestPaymentContainer>
+    </CheckoutPageContainer>
 );
 
 const mapStateToProps = createStructuredSelector({
