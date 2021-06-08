@@ -12,7 +12,12 @@ const config = {
     measurementId: "G-P8TL2QHCQD"
 }
 
-firebase.initializeApp(config);
+if (!firebase.apps.length) { // Not initialized. so, initialize.
+    firebase.initializeApp(config);
+}else {
+    firebase.app(); // if already initialized
+}
+
 
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
@@ -40,6 +45,36 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
     }
 
     return userRef;
+}
+/* //[FOR FIREBASE/FIRESTORE DB PUSHING]
+export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+    const collectionRef = firestore.collection(collectionKey);
+    
+    const batch = firestore.batch();
+
+    objectsToAdd.forEach(obj => {
+        const newDocRef = collectionRef.doc(); //collectionRef.doc() creates an empty doc with just ID (generated)
+        batch.set(newDocRef, obj);
+    });
+    await batch.commit(); //Batch executes the queued codes. This is a promise, so, on a resolve, it returns empty string. rejects otherwise 
+}
+*/
+
+export const convertCollectionsSnapshotToMap = (collectionsSnapShot) => {
+    const transformedCollections = collectionsSnapShot.docs.map(doc => {
+        const {title, items} = doc.data();
+
+        return {
+            id: doc.id,
+            routeName: encodeURI(title.toLowerCase()),
+            title,
+            items
+        }
+    });
+    return transformedCollections.reduce((accumulator, collection) => {
+        accumulator[collection.title.toLowerCase()] = collection;
+        return accumulator;
+    }, {});
 }
 
 const provider = new firebase.auth.GoogleAuthProvider();

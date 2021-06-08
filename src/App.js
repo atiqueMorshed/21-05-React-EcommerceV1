@@ -10,11 +10,14 @@ import ShopPage from './pages/shop/shop.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
 import CheckoutPage from './pages/checkout/checkout.component';
 
+// import {auth, createUserProfileDocument, addCollectionAndDocuments} from './firebase/firebase.utils'; //[FOR FIREBASE/FIRESTORE DB PUSHING]
 import {auth, createUserProfileDocument} from './firebase/firebase.utils';
-import {setCurrentUser} from './redux/user/user.actions';
 
 import {createStructuredSelector} from 'reselect';
+
 import {selectCurrentUser} from './redux/user/user.selectors';
+import {setCurrentUser} from './redux/user/user.actions';
+// import {selectCollectionsForCollectionPreview} from './redux/shop/shop.selector'; //[FOR FIREBASE/FIRESTORE DB PUSHING]
 
 class App extends React.Component {
   
@@ -22,25 +25,28 @@ class App extends React.Component {
 
   componentDidMount() {
 
+    // const {setCurrentUser, collectionsArray} = this.props; //[FOR FIREBASE/FIRESTORE DB PUSHING]
     const {setCurrentUser} = this.props;
 
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => { //open subscription
       if(userAuth) {
-        try {
-          const userRef = await createUserProfileDocument(userAuth);
-          userRef.onSnapshot(snapShot => {
-            setCurrentUser({
-              id: snapShot.id,
-              ...snapShot.data()
-            });
+        const userRef = await createUserProfileDocument(userAuth);
+        userRef.onSnapshot(snapShot => {
+          setCurrentUser({
+            id: snapShot.id,
+            ...snapShot.data()
           });
-        } catch(error) {
-          console.log(error);
-        }
-      } else {
-        setCurrentUser(userAuth); // Set currentUser to null 
+        });
       }
-    });
+      setCurrentUser(userAuth); // Set currentUser to null 
+
+      /*[FOR FIREBASE/FIRESTORE DB PUSHING]
+      addCollectionAndDocuments('collections', collectionsArray.map(({title, items}) => ({// Here, we are sending only title and items from collectionsArray to be pushed into firebase
+        title,
+        items
+      }))); 
+      */
+    }, error => console.log(error));
   }
 
   componentWillUnmount() {
@@ -69,6 +75,7 @@ class App extends React.Component {
 }
 const mapStateToProps = createStructuredSelector({
   currentUser: selectCurrentUser
+  // collectionsArray: selectCollectionsForCollectionPreview //[FOR FIREBASE/FIRESTORE DB PUSHING]
 });
 
 const mapDispatchToProps = dispatch => ({

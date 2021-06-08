@@ -1,5 +1,5 @@
 import React from 'react';
-import {Redirect} from 'react-router-dom';
+// import {Redirect} from 'react-router-dom';
 
 import {connect} from 'react-redux';
 
@@ -11,21 +11,32 @@ import {CollectionPageContainer, CollectionPageTitles, CollectionPageItemsContai
 // import './collection.styles.scss';
 
 const CollectionPage = ({collection}) => {
-    if(collection) {
-        const {title, items} = collection;
-        return(
-            <CollectionPageContainer>
-                <CollectionPageTitles>{title}</CollectionPageTitles>
-                <CollectionPageItemsContainer>
-                    {
-                        items.map(item => <CollectionItem key={item.id} item={item} />)
-                    }
-                </CollectionPageItemsContainer>
-            </CollectionPageContainer>
-        )
-    } else {
-        return <Redirect to='/'/>
-    }
+    const {title, items} = collection;
+    return(
+        <CollectionPageContainer>
+            <CollectionPageTitles>{title}</CollectionPageTitles>
+            <CollectionPageItemsContainer>
+                {
+                    items.map(item => <CollectionItem key={item.id} item={item} />)
+                }
+            </CollectionPageItemsContainer>
+        </CollectionPageContainer>
+    );
+    // if(collection) {
+    //     const {title, items} = collection;
+    //     return(
+    //         <CollectionPageContainer>
+    //             <CollectionPageTitles>{title}</CollectionPageTitles>
+    //             <CollectionPageItemsContainer>
+    //                 {
+    //                     items.map(item => <CollectionItem key={item.id} item={item} />)
+    //                 }
+    //             </CollectionPageItemsContainer>
+    //         </CollectionPageContainer>
+    //     )
+    // } else {
+    //     return <Redirect to='/'/>
+    // }
     
 };
 
