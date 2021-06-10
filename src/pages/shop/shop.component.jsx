@@ -2,54 +2,57 @@ import React from 'react';
 import {Route} from 'react-router-dom';
 
 import {connect} from 'react-redux';
-import {updateCollections} from '../../redux/shop/shop.actions';
+import {fetchCollectionsStartAsync} from '../../redux/shop/shop.actions';
 
-import WithSpinner from '../../components/with-spinner/with-spinner.component';
-
-import {firestore, convertCollectionsSnapshotToMap} from '../../firebase/firebase.utils';
-
-import CollectionsOverview from '../../components/collections-overview/collections-overview.component';
-import CollectionPage from '../collection/collection.component';
-
+import CollectionsOverviewContainer from '../../components/collections-overview/collections-overview.container';
+import CollectionPageContainer from '../collection/collection.container';
 // import './shop.styles.scss';
 
-const CollectionsOverviewWithSpinner = WithSpinner(CollectionsOverview);
-const CollectionPageWithSpinner = WithSpinner(CollectionPage);
 
 class ShopPage extends React.Component{
-
-    state = { //Short form of calling constructior, super then this.state
-        loading: true
-    }
-
-    unsubscribeFromSnapShot = null;
     
     componentDidMount() {
-        const {updateCollections} = this.props;
+        const {fetchCollectionsStartAsync} = this.props;
+        fetchCollectionsStartAsync();
 
-        const collectionRef = firestore.collection('collections');
-        
-        collectionRef.onSnapshot(async snapshot => {
-            // console.log(snapshot);
-            const collectionsMap = convertCollectionsSnapshotToMap(snapshot);
-            updateCollections(collectionsMap);
-            this.setState({loading: false});
-        });
+        /* Previous Alternatives
+
+        // // The default Observer pattern (SUBSCRIPTION)
+        // collectionRef.onSnapshot(async snapshot => {
+        //     // console.log(snapshot);
+        //     const collectionsMap = convertCollectionsSnapshotToMap(snapshot);
+        //     updateCollections(collectionsMap);
+        //     this.setState({loading: false});
+        // });
+
+        // // Alternative Promise based approch. This is not like observable, so it'll only update when mounted
+        // collectionRef.get().then(snapshot => {
+        //     // console.log(snapshot);
+        //     const collectionsMap = convertCollectionsSnapshotToMap(snapshot);
+        //     updateCollections(collectionsMap);
+        //     this.setState({loading: false});
+        // });
+
+        // // Fetch 
+        // fetch('https://firestore.googleapis.com/v1/projects/react-ecommerce-v1-db/databases/(default)/documents/collections')
+        //     .then(response => response.json())
+        //     .then(collections => console.log(collections));
+        */
     }
     
     render() {
         const {match} = this.props;
         return (
             <div>
-                <Route exact path={`${match.path}`} render={(props) => <CollectionsOverviewWithSpinner isLoading={this.state.loading} {...props}/>} />
-                <Route path={`${match.path}/:collectionID`} render={(props) => <CollectionPageWithSpinner isLoading={this.state.loading} {...props} />} />
+                <Route exact path={`${match.path}`} component={CollectionsOverviewContainer} />
+                <Route path={`${match.path}/:collectionID`} component={CollectionPageContainer} />
             </div>
         )
     }
 }
 
 const mapDispatchToProps = dispatch => ({
-    updateCollections: collectionsMap => dispatch(updateCollections(collectionsMap))
+    fetchCollectionsStartAsync: () => dispatch(fetchCollectionsStartAsync())
 });
 
 export default connect(null, mapDispatchToProps)(ShopPage);
