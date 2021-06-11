@@ -10,49 +10,18 @@ import ShopPage from './pages/shop/shop.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
 import CheckoutPage from './pages/checkout/checkout.component';
 
-// import {auth, createUserProfileDocument, addCollectionAndDocuments} from './firebase/firebase.utils'; //[FOR FIREBASE/FIRESTORE DB PUSHING]
-import {auth, createUserProfileDocument} from './firebase/firebase.utils';
-
 import {createStructuredSelector} from 'reselect';
 
 import {selectCurrentUser} from './redux/user/user.selectors';
-import {setCurrentUser} from './redux/user/user.actions';
-// import {selectCollectionsForCollectionPreview} from './redux/shop/shop.selector'; //[FOR FIREBASE/FIRESTORE DB PUSHING]
+import {checkUserSession} from './redux/user/user.actions';
 
 class App extends React.Component {
-  
-  unsubscribeFromAuth = null;
 
   componentDidMount() {
-
-    // const {setCurrentUser, collectionsArray} = this.props; //[FOR FIREBASE/FIRESTORE DB PUSHING]
-    const {setCurrentUser} = this.props;
-
-    this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => { //open subscription
-      if(userAuth) {
-        const userRef = await createUserProfileDocument(userAuth);
-        userRef.onSnapshot(snapShot => {
-          setCurrentUser({
-            id: snapShot.id,
-            ...snapShot.data()
-          });
-        });
-      }
-      setCurrentUser(userAuth); // Set currentUser to null 
-
-      /*[FOR FIREBASE/FIRESTORE DB PUSHING]
-      addCollectionAndDocuments('collections', collectionsArray.map(({title, items}) => ({// Here, we are sending only title and items from collectionsArray to be pushed into firebase
-        title,
-        items
-      }))); 
-      */
-    }, error => console.log(error));
+    const {checkUserSession} = this.props;
+    checkUserSession();
   }
-
-  componentWillUnmount() {
-    this.unsubscribeFromAuth(); // Close Subscription
-  }
-
+  
   render() {
     return (
       <div>
@@ -73,13 +42,13 @@ class App extends React.Component {
     );
   }
 }
+
 const mapStateToProps = createStructuredSelector({
   currentUser: selectCurrentUser
-  // collectionsArray: selectCollectionsForCollectionPreview //[FOR FIREBASE/FIRESTORE DB PUSHING]
 });
 
 const mapDispatchToProps = dispatch => ({
-  setCurrentUser: user => dispatch(setCurrentUser(user))
+  checkUserSession: () => dispatch(checkUserSession())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
