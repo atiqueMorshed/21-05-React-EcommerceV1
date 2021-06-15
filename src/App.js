@@ -1,7 +1,6 @@
 import './App.css';
 import React from 'react';
 import {Route, Switch, Redirect} from 'react-router-dom';
-import {connect} from 'react-redux';
 
 import Header from './components/header/header.component';
 
@@ -11,34 +10,40 @@ import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up
 import CheckoutPage from './pages/checkout/checkout.component';
 
 import {auth, createUserProfileDocument} from './firebase/firebase.utils';
-import {setCurrentUser} from './redux/user/user.actions';
 
-import {createStructuredSelector} from 'reselect';
-import {selectCurrentUser} from './redux/user/user.selectors';
+import CurrentUserContext from './contexts/current-user/current-user.context';
 
 class App extends React.Component {
+  
+  constructor() {
+    super();
+    this.state = {
+      currentUser: null
+    }
+  }
   
   unsubscribeFromAuth = null;
 
   componentDidMount() {
-
-    const {setCurrentUser} = this.props;
-
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => { //open subscription
       if(userAuth) {
         try {
           const userRef = await createUserProfileDocument(userAuth);
           userRef.onSnapshot(snapShot => {
-            setCurrentUser({
-              id: snapShot.id,
-              ...snapShot.data()
+            this.setState({
+              currentUser: {
+                id: snapShot.id,
+                ...snapShot.data()
+              }
             });
           });
         } catch(error) {
           console.log(error);
         }
       } else {
-        setCurrentUser(userAuth); // Set currentUser to null 
+        this.setState({ // Set currentUser to null 
+          currentUser: userAuth
+        }); 
       }
     });
   }
@@ -50,7 +55,9 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <Header />
+        <CurrentUserContext.Provider value={this.state.currentUser}>
+          <Header />
+        </CurrentUserContext.Provider>
         <Switch> {/* Goes char by char and as soon as a match is found, breaks and loads that component */}
           <Route exact path='/' component={HomePage} /> {/* exact[true/false] if true, only renders component which strictly matches the path */}
           <Route path='/shop' component={ShopPage} />
@@ -58,7 +65,7 @@ class App extends React.Component {
           <Route 
           exact 
           path='/signin' 
-          render = {() => this.props.currentUser 
+          render = {() => this.state.currentUser 
             ? (<Redirect to='/' />) 
             : (<SignInAndSignUpPage />)} 
           />
@@ -67,12 +74,4 @@ class App extends React.Component {
     );
   }
 }
-const mapStateToProps = createStructuredSelector({
-  currentUser: selectCurrentUser
-});
-
-const mapDispatchToProps = dispatch => ({
-  setCurrentUser: user => dispatch(setCurrentUser(user))
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;
