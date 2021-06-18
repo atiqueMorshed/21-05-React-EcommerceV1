@@ -30,6 +30,40 @@ export const CollectionItemsContainer = styled.div`
         display: flex;
       }
     }
+
+    @media screen and (max-width: 1200px) {
+      width: 20vw;
+    }
+
+    @media screen and (max-width: 800px) {
+      width: 40vw;
+
+      &:hover {
+      ${BackgroundImage} {
+        opacity: unset;
+      }
+
+      button {
+        opacity: unset;
+      }
+    }
+
+    }
+
+    @media screen and (max-width: 500px) {
+      width: 80vw;
+
+      &:hover {
+      ${BackgroundImage} {
+        opacity: unset;
+      }
+
+      button {
+        opacity: unset;
+      }
+    }
+
+    }
 `;
 
 export const CollectionFooterContainer = styled.div`
@@ -54,4 +88,11 @@ export const AddButton = styled(CustomButton)`
     position: absolute;
     top: 255px;
     display: none;
+    
+    @media screen and (max-width: 800px) {
+      display: block;
+      opacity: 0.9;
+      min-width: unset;
+      padding: 0 10px;
+    }
 `;
