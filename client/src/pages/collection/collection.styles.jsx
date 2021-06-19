@@ -13,5 +13,17 @@ export const CollectionPageTitles = styled.h2`
 export const CollectionPageItemsContainer = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-gap: 10px;
+    gap: 10px;
+
+    @media screen and (max-width: 800px) {
+        grid-template-columns: 1fr 1fr;
+        gap: space-between;
+        margin: auto;
+    }
+
+    @media screen and (max-width: 500px) {
+        grid-template-columns: 1fr;
+        gap: unset;
+        margin: auto;
+    }
 `;
